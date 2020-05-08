@@ -45,12 +45,27 @@ module.exports = {
     {
       resolve: 'gatsby-source-cloudinary',
       options: {
+        // name: `images`, // NOTE: note sure if this is needed or not, maybe delete
         cloudName: process.env.CLOUDINARY_CLOUD_NAME,
         apiKey: process.env.CLOUDINARY_API_KEY,
         apiSecret: process.env.CLOUDINARY_API_SECRET,
-        // resourceType: 'image',
-        // type: 'type Value',
-        // prefix: 'bricksdistorted/',
+        resourceType: 'image',
+        tags: true,
+        prefix: `bricksdistorted/`,
+        maxResults: 500, // for some reason they limit this by default to only 10 results
+      },
+    },
+    {
+      resolve: 'gatsby-source-cloudinary',
+      options: {
+        // name: `videos`, // NOTE: note sure if this is needed or not, maybe delete
+        cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+        apiKey: process.env.CLOUDINARY_API_KEY,
+        apiSecret: process.env.CLOUDINARY_API_SECRET,
+        resourceType: 'video',
+        tags: true,
+        prefix: `bricksdistorted/`,
+        maxResults: 500, // for some reason they limit this by default to only 10 results
       },
     },
     // this (optional) plugin enables Progressive Web App + Offline functionality

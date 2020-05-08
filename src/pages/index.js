@@ -52,41 +52,42 @@ function mergeContentWithCoverImages(structureNodes, coverImageNodes) {
   });
 }
 
+function deriveFromTagPrefix(prefix) {
+  return tags => {
+    const tag = (tags || []).find(tag => tag.startsWith(prefix));
+    if (!tag) {
+      return '';
+    }
+
+    return tag.replace(prefix, '').trim();
+  };
+}
+
 const IndexPage = () => {
   const data = useStaticQuery(graphql`
     query HomePageQuery {
-      structures: allMarkdownRemark {
-        nodes {
-          id
-          fields {
-            slug
-          }
-          frontmatter {
-            title
-            coverImage {
-              alt
-              src {
-                name
-              }
-            }
-          }
-        }
-      }
-      coverImages: allImageSharp(
-        sort: { fields: fluid___originalName, order: ASC }
+      cloudinaryCoverImages: allCloudinaryMedia(
+        filter: { tags: { in: "coverphoto" } }
       ) {
+        totalCount
         nodes {
-          fluid(quality: 85) {
-            originalName
-            ...GatsbyImageSharpFluid
-          }
+          secure_url
+          public_id
+          tags
+          width
+          height
         }
       }
     }
   `);
 
-  const items = mergeContentWithCoverImages(data.structures, data.coverImages);
-  console.log({ items });
+  // const items = mergeContentWithCoverImages(data.structures, data.coverImages);
+  // console.log({ items });
+
+  console.log(data.cloudinaryCoverImages.nodes);
+
+  const findTitleFromTag = deriveFromTagPrefix('title:');
+  const findSlugFromTag = deriveFromTagPrefix('slug:');
 
   return (
     <Theme>
@@ -95,22 +96,39 @@ const IndexPage = () => {
         <div className="container">
           <div className="row">
             <div className="col-12">
-              <div id="fitRows-grid" className="portfolio-item column-2 style2">
-                {items.map(item => (
-                  <div className="grid-item w-50 px-15 mb-30" key={item.id}>
-                    <div className="single-portfolio position-relative text-center">
+              <div
+                id="fitRows-grid"
+                className="portfolio-item column-2 style2"
+                style={{
+                  display: 'grid',
+                  'grid-template-columns':
+                    'repeat( auto-fit, minmax(50%, 1fr) )',
+                  'grid-auto-rows': 'minmax(300px, 60vh)',
+                }}
+              >
+                {data.cloudinaryCoverImages.nodes.map(image => (
+                  <div className="grid-item px-15 mb-30" key={image.secure_url}>
+                    <div
+                      className="single-portfolio position-relative text-center"
+                      style={{ height: '100%' }}
+                    >
                       <img
-                        src={item.coverImage.fluid.src}
-                        alt={item.coverImage?.alt}
+                        src={image.secure_url}
+                        alt=""
+                        style={{
+                          height: '100%',
+                          'object-fit': 'cover',
+                          'object-position': 'center',
+                        }}
                       />
                       <div className="portfolio-title bg-white rgb-85 d-flex flex-column justify-content-center">
-                        <a href="details-2.html">
-                          <h3>{item.title}</h3>
-                        </a>
-                        <h5>Branding</h5>
-                        <a href="details-2.html">
+                        <Link to={findSlugFromTag(image.tags)}>
+                          <h3>{findTitleFromTag(image.tags)}</h3>
+                        </Link>
+                        <h5>See More</h5>
+                        <Link to={findSlugFromTag(image.tags)}>
                           <i className="ti-arrow-right" />
-                        </a>
+                        </Link>
                       </div>
                     </div>
                   </div>

@@ -1,21 +1,37 @@
 import React from 'react';
-import Img from 'gatsby-image';
 import { graphql } from 'gatsby';
 import SEO from '../components/seo';
+import DebugJSON from '../components/DebugJSON';
 import Theme from '../theme';
 
 function DetailPage(props) {
   const {
     structure: { frontmatter: content },
-    coverImage,
+    images,
   } = props.data;
 
   return (
     <Theme>
       <SEO title={content.title} />
       <h1>{content.title}</h1>
-      <Img sizes={coverImage.sizes} alt="FIXME" />
-      <pre>{JSON.stringify(props.data, null, 2)}</pre>
+      {images.nodes.map(image => (
+        <div className="grid-item px-15 mb-30" key={image.secure_url}>
+          <div
+            className="single-portfolio position-relative text-center"
+            style={{ height: '100%' }}
+          >
+            <img
+              src={image.secure_url}
+              alt=""
+              style={{
+                height: '100%',
+                'object-fit': 'cover',
+                'object-position': 'center',
+              }}
+            />
+          </div>
+        </div>
+      ))}
     </Theme>
   );
 }
@@ -23,22 +39,21 @@ function DetailPage(props) {
 export default DetailPage;
 
 export const query = graphql`
-  query StructureQuery($slug: String!, $coverImage: String!) {
-    structure: markdownRemark(fields: { slug: { eq: $slug } }) {
+  query StructureQuery($slug: String!, $regexSlug: String!) {
+    structure: markdownRemark(frontmatter: { slug: { eq: $slug } }) {
       id
       frontmatter {
         title
+        slug
       }
     }
-
-    coverImage: imageSharp(sizes: { originalName: { eq: $coverImage } }) {
-      id
-      original {
-        src
-      }
-      sizes(quality: 85) {
-        originalName
-        ...GatsbyImageSharpSizes
+    images: allCloudinaryMedia(filter: { tags: { regex: $regexSlug } }) {
+      nodes {
+        secure_url
+        public_id
+        tags
+        width
+        height
       }
     }
   }

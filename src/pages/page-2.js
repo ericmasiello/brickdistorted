@@ -1,8 +1,8 @@
-import React from "react"
-import { Link } from "gatsby"
+import React from 'react';
+import { Link } from 'gatsby';
 
-import Theme from "../theme"
-import SEO from "../components/seo"
+import Theme from '../theme';
+import SEO from '../components/seo';
 
 const SecondPage = () => (
   <Theme>
@@ -11,6 +11,6 @@ const SecondPage = () => (
     <p>Welcome to page 2</p>
     <Link to="/">Go back to the homepage</Link>
   </Theme>
-)
+);
 
-export default SecondPage
+export default SecondPage;

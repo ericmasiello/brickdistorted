@@ -1,14 +1,14 @@
-import React from "react"
-import Img from "gatsby-image"
-import { graphql } from "gatsby"
-import SEO from "../components/seo"
-import Theme from "../theme"
+import React from 'react';
+import Img from 'gatsby-image';
+import { graphql } from 'gatsby';
+import SEO from '../components/seo';
+import Theme from '../theme';
 
 function DetailPage(props) {
   const {
     structure: { frontmatter: content },
     coverImage,
-  } = props.data
+  } = props.data;
 
   return (
     <Theme>
@@ -17,10 +17,10 @@ function DetailPage(props) {
       <Img sizes={coverImage.sizes} alt="FIXME" />
       <pre>{JSON.stringify(props.data, null, 2)}</pre>
     </Theme>
-  )
+  );
 }
 
-export default DetailPage
+export default DetailPage;
 
 export const query = graphql`
   query StructureQuery($slug: String!, $coverImage: String!) {
@@ -42,4 +42,4 @@ export const query = graphql`
       }
     }
   }
-`
+`;

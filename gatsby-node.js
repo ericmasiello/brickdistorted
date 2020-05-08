@@ -1,28 +1,28 @@
-const path = require("path")
-const { createFilePath } = require("gatsby-source-filesystem")
+const path = require('path');
+const { createFilePath } = require('gatsby-source-filesystem');
 
 function dedupeSlug(slug) {
   // duped slug '/fallingwater/fallingwater/'
-  const parts = slug.split("/")
+  const parts = slug.split('/');
   // parts = ['', 'fallingwater', 'fallingwater', ''];
 
   if (parts.length < 4 || parts[1] !== parts[2]) {
-    return slug
+    return slug;
   }
 
-  return `/${parts[1]}/`
+  return `/${parts[1]}/`;
 }
 
 exports.onCreateNode = ({ node, getNode, actions }) => {
-  const { createNodeField } = actions
-  if (node.internal.type === "MarkdownRemark") {
+  const { createNodeField } = actions;
+  if (node.internal.type === 'MarkdownRemark') {
     const slug = dedupeSlug(
       createFilePath({
         node,
         getNode,
-        basePath: "pages",
+        basePath: 'pages',
       })
-    )
+    );
 
     /*
      * Creates a unique slug for each MarkdownRemark node
@@ -43,14 +43,14 @@ exports.onCreateNode = ({ node, getNode, actions }) => {
      */
     createNodeField({
       node,
-      name: "slug",
+      name: 'slug',
       value: slug,
-    })
+    });
   }
-}
+};
 
 exports.createPages = ({ graphql, actions }) => {
-  const { createPage } = actions
+  const { createPage } = actions;
   return new Promise(resolve => {
     graphql(`
       query FetchStructures {
@@ -74,10 +74,10 @@ exports.createPages = ({ graphql, actions }) => {
       }
     `).then(result => {
       result.data.structures.nodes.forEach(node => {
-        const coverImageAbsPath = node.frontmatter.coverImage.src.absolutePath
-        const coverImageFileName = coverImageAbsPath.split("/")[
-          coverImageAbsPath.split("/").length - 1
-        ]
+        const coverImageAbsPath = node.frontmatter.coverImage.src.absolutePath;
+        const coverImageFileName = coverImageAbsPath.split('/')[
+          coverImageAbsPath.split('/').length - 1
+        ];
 
         createPage({
           path: node.fields.slug,
@@ -87,9 +87,9 @@ exports.createPages = ({ graphql, actions }) => {
             slug: node.fields.slug,
             coverImage: coverImageFileName,
           },
-        })
-      })
-      resolve()
-    })
-  })
-}
+        });
+      });
+      resolve();
+    });
+  });
+};
